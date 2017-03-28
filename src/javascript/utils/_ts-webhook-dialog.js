@@ -85,7 +85,6 @@ Ext.define('CA.techservices.dialog.WebhookDialog',{
     
     getValues: function() {
     	var values = {
-    			ObjectTypes: this.ObjectTypes,
     			Expressions: [{
     			      "AttributeName": "ObjectID",
     			      "Operator":      ">",
@@ -111,7 +110,24 @@ Ext.define('CA.techservices.dialog.WebhookDialog',{
             { text: 'App Url', dataIndex: 'AppUrl', editor: { xtype:'rallytextfield', height: 25 } },
             { text: 'Webhook Name', dataIndex: 'Name', editor: { xtype:'rallytextfield', height: 25 } },
             { text: 'Target Url', dataIndex: 'TargetUrl', editor: { xtype:'rallytextfield', height: 25 } },
-//            { text: 'Objects', dataIndex: 'ObjectTypes', editor: { xtype:'rallytextfield', height: 25 } },
+            { text: 'Objects', dataIndex: 'ObjectTypes', editor: { 
+                    xtype: 'rallycombobox',
+                    allowBlank: false,
+                    autoSelect: false,
+                    multiSelect:true,
+                    displayField: 'DisplayName',
+                    valueField: 'TypePath',
+                    storeConfig: {
+                        model: Ext.identityFn('TypeDefinition'),
+                        sorters: [{ property: 'DisplayName' }],
+                        fetch: ['DisplayName', 'ElementName', 'TypePath', 'Parent', 'UserListable'],
+                        filters: [{property:'UserListable',value:true}],
+                        autoLoad: true,
+                        remoteSort: false,
+                        remoteFilter: true
+                    }
+                
+                } },
 //            { text: 'Query', dataIndex: 'Expressions', editor: { xtype:'rallytextfield', height: 25 } }
         ];
         
