@@ -1,6 +1,6 @@
 Ext.define('CA.techservices.dialog.WebhookDialog',{
     extend: 'Rally.ui.dialog.Dialog',
-    alias: 'tswebhookdialog',
+    alias: 'widget.tswebhookdialog',
     
     config: {
     	title: 'Webhook Editor',
@@ -12,12 +12,18 @@ Ext.define('CA.techservices.dialog.WebhookDialog',{
     	 * (That's why they're capitalized.)
     	 * 
     	 */
-    	Name: 'My FlowDock Webhook',
-    	AppName: 'My FlowDock Integration',
-    	AppUrl: 'https://www.ca.com/us/products/ca-agile-central.html',
-    	TargetUrl: 'http://my.service.com/ready/to/receive/post',
-    	ObjectTypes: ['HierarchicalRequirement'],
-    	Expressions: []
+        webhookConfig: {
+        	Name: 'My Webhook',
+        	AppName: 'My App',
+        	AppUrl: 'https://www.ca.com/us/products/ca-agile-central.html',
+        	TargetUrl: 'http://live-api-creator-2017-01-27.us-east-1.elasticbeanstalk.com/http/default/chxqx/rallypost',
+        	ObjectTypes: ['HierarchicalRequirement'],
+        	Expressions: [{
+                "AttributeName": "ObjectID",
+                "Operator":      "=",
+                "Value":         23
+            }]
+        }
     },
     
     constructor: function(config) {
@@ -84,24 +90,18 @@ Ext.define('CA.techservices.dialog.WebhookDialog',{
     },
     
     getValues: function() {
-    	var values = {
-    			Expressions: [{
-    			      "AttributeName": "ObjectID",
-    			      "Operator":      ">",
-    			      "Value":         10
-    			    }]
-    	};
-    	Ext.Array.each( this.query('component[cls=ts-editor-field-editor]'), function(editor){
-    		if ( editor._fieldDef && editor._fieldDef.dataIndex ) {
-    			values[editor._fieldDef.dataIndex] = editor.getValue();
-    		}
-    	});
-    	
-    	return values;
+        Ext.Object.each(this.webhookConfig, function(cfg_name){
+            if ( this.down('#' + cfg_name) ) {
+                console.log('getting value for ', cfg_name);
+                console.log('value:', this.down('#'+cfg_name).getValue());
+                this.webhookConfig[cfg_name] = this.down('#'+cfg_name).getValue();
+            }
+        },this);
+        return this.webhookConfig;
     },
     
     _getFieldValue: function(field_name) {
-    	return this[field_name] || "";
+    	return this.webhookConfig[field_name] || "";
     },
     
     _addFields: function() {
@@ -125,15 +125,32 @@ Ext.define('CA.techservices.dialog.WebhookDialog',{
                         autoLoad: true,
                         remoteSort: false,
                         remoteFilter: true
+                    },
+                    listeners: {
+                        scope: this,
+                        change: this._updateModels
                     }
                 
                 } },
-//            { text: 'Query', dataIndex: 'Expressions', editor: { xtype:'rallytextfield', height: 25 } }
+            { text: 'Query', dataIndex: 'Expressions', editor: { 
+                xtype:'tswebhookfilterfield', 
+                height: 25,
+                models: this.webhookConfig.ObjectTypes
+            } }
         ];
         
         Ext.Array.each(display_fields, function(field) {
             this._addField(field);
         },this);
+    },
+    
+    _updateModels: function(combo,values) {
+        if ( values.length > 0 ) {
+            this.webhookConfig.ObjectTypes = values;
+            if ( this.down('#Expressions') ) {
+                this.down('#Expressions').updateModels(this.webhookConfig.ObjectTypes);
+            }
+        }
     },
     
     _addField: function(field_def) {
@@ -154,6 +171,7 @@ Ext.define('CA.techservices.dialog.WebhookDialog',{
         var value = this._getFieldValue(field_def.dataIndex);
  
         container.add(Ext.apply({
+            itemId: field_def.dataIndex,
         	padding: 3,
         	margin: 2,
         	value: value,

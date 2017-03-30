@@ -35,6 +35,7 @@ Ext.define("TSWebHookCreator", {
             	readytosave: function(dialog,values) {
                     this.logger.log('Values', values);
                     // todo: clean values/validate
+                    
                     this._saveWebHook(values);
                 }
             }
