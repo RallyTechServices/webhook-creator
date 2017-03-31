@@ -19,7 +19,7 @@ Ext.define('CA.techservices.dialog.WebhookDialog',{
         	TargetUrl: 'http://live-api-creator-2017-01-27.us-east-1.elasticbeanstalk.com/http/default/chxqx/rallypost',
         	ObjectTypes: ['HierarchicalRequirement'],
         	Expressions: [{
-                "AttributeName": "ObjectID",
+                "AttributeID": null,
                 "Operator":      "=",
                 "Value":         23
             }]
@@ -97,6 +97,20 @@ Ext.define('CA.techservices.dialog.WebhookDialog',{
                 this.webhookConfig[cfg_name] = this.down('#'+cfg_name).getValue();
             }
         },this);
+        
+//        this.webhookConfig.Expressions = [{
+//            "AttributeID": "20bb523b-ddf3-4c82-bff5-724a1847d1cb",
+////            "AttributeName": "KanbanState",
+//            "Operator":      "~",
+//            "Value":         [
+//                "Ready To Pull",
+//                "Test Planning",
+//                "In Dev",
+//                "Code Review",
+//                "In Test"
+//            ]
+//        }];
+        
         return this.webhookConfig;
     },
     

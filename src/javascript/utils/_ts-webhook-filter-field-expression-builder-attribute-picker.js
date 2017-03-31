@@ -16,7 +16,7 @@ Ext.define('CA.techservices.webhook.field.AttributeFieldComboBox', {
             autoExpand: true,
             defaultSelectionPosition: null,
             displayField: 'displayName',
-            valueField: 'name',
+            valueField: 'attributeID',
             models: undefined,
             context: undefined,
             listConfig: {
@@ -60,7 +60,7 @@ Ext.define('CA.techservices.webhook.field.AttributeFieldComboBox', {
 
         _getFilterableFieldsStore: function(){
             return {
-                fields: ['displayName', 'modelNames', 'name'],
+                fields: ['displayName', 'modelNames', 'name', 'attributeID'],
                 data: this._getFilterableFields()
             };
         },
@@ -69,10 +69,12 @@ Ext.define('CA.techservices.webhook.field.AttributeFieldComboBox', {
             var fields = _.filter(this._getAllFields(), this._shouldShowField, this);
 
             return _(fields).map(function(field) {
+            	console.log(field.name, field);
                 return {
                     displayName: Rally.ui.renderer.FieldDisplayNameRenderer.getDisplayName(field),
                     modelNames: this._getModelNamesForDuplicates(field, fields),
-                    name: field.name
+                    name: field.name,
+                    attributeID: field.attributeDefinition && field.attributeDefinition._refObjectUUID
                 };
             }, this).sortBy('displayName').value();
         },

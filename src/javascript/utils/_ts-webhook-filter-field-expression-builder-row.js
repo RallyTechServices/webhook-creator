@@ -9,13 +9,13 @@ Ext.define('CA.techservices.wehook.field.ExpressionRow',{
     config: {
     	models: ['HierarchicalRequirement'],
     	context: undefined,
-    	value: { AttributeName: undefined, Operator: undefined, Value: undefined }
+    	value: { AttributeID: undefined, Operator: undefined, Value: undefined }
     },
     
     constructor: function(config) {
         this.mergeConfig(config);
         if ( ! this.value ) {
-        	this.value = { AttributeName: undefined, Operator: undefined, Value: undefined };
+        	this.value = { AttributeID: undefined, Operator: undefined, Value: undefined };
         }
         this.callParent([this.config]);
     },
@@ -85,7 +85,7 @@ Ext.define('CA.techservices.wehook.field.ExpressionRow',{
             fieldLabel: 'Attribute',
             labelSeparator: '',
             emptyText: 'Choose Field...',
-            value: this.value && this.value.AttributeName,
+            value: this.value && this.value.AttributeID,
             models: this.models,
             listeners: {
                 select: this._onAttributeSelect,
@@ -259,7 +259,7 @@ Ext.define('CA.techservices.wehook.field.ExpressionRow',{
     		return undefined;
     	}
     	this.value = { 
-            AttributeName: this.attributeField.getValue(), 
+            AttributeID: this.attributeField.getValue(), 
             Operator: this.operatorField.getValue(), 
             Value: this.valueField.getValue() 
         };
