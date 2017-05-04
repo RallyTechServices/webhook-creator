@@ -94,7 +94,16 @@ Ext.define('CA.techservices.dialog.WebhookDialog',{
             if ( this.down('#' + cfg_name) ) {
                 console.log('getting value for ', cfg_name);
                 console.log('value:', this.down('#'+cfg_name).getValue());
-                this.webhookConfig[cfg_name] = this.down('#'+cfg_name).getValue();
+                var value = this.down('#'+cfg_name).getValue();
+                if ( Ext.isArray(value) && cfg_name == "ObjectTypes" ) {
+                    value = Ext.Array.map(value, function(v) {
+                        if ( /ortfolio/.test(v) ) {
+                            return 'PortfolioItem';
+                        }
+                        return v;
+                    });
+                }
+                this.webhookConfig[cfg_name] = value;
             }
         },this);
         
@@ -160,7 +169,14 @@ Ext.define('CA.techservices.dialog.WebhookDialog',{
     
     _updateModels: function(combo,values) {
         if ( values.length > 0 ) {
-            this.webhookConfig.ObjectTypes = values;
+            var clean_values = Ext.Array.map(values, function(value){
+                if ( /ortfolio/.test(value) ) {
+                    return 'PortfolioItem';
+                }
+                return value;
+            });
+           
+            this.webhookConfig.ObjectTypes = clean_values;
             if ( this.down('#Expressions') ) {
                 this.down('#Expressions').updateModels(this.webhookConfig.ObjectTypes);
             }
