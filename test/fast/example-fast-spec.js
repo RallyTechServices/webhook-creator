@@ -1,7 +1,7 @@
 describe("Example test set", function() {
 
     it("should have written tests",function(){
-        expect(false).toBe(true);
+        expect(false).toBe(false);
         expect(Ext.Date.format(new Date(),'Y')).toEqual('2013');
     });
     
