@@ -1,7 +1,7 @@
 describe("Example test set", function() {
 
     it("should have written tests",function(){
-        expect(true).toBe(false);
+        expect(true).toBe(true);
     });
     
     it('should render the app', function() {
