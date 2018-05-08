@@ -2,10 +2,14 @@
 
 ## Summary/Description
 
-![screenshot](./images/screenshot.png "This is an example")
+Eventually, this app will let us interact with webhooks.  Right now, it 
+only creates a grid with defined webhooks.
+
+![screenshot](./images/screenshot.png "Initial shot")
 
 ## Development Notes
 
+Webhooks aren't available in the WSAPI, so we're doing an ajax call to the webhooks endpoint.
 
 ### First Load
 

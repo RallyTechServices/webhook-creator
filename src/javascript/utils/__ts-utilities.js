@@ -2,6 +2,21 @@ Ext.define('TSUtilities', {
 
     singleton: true,
 
+    loadWebhooks: function() {
+        var deferred = Ext.create('Deft.Deferred');
+        Ext.Ajax.request({
+            url: '/apps/pigeon/api/v2/webhook',
+            success: function(response,opts) {
+                var webhooks = response.responseText && JSON.parse(response.responseText);
+                deferred.resolve(webhooks.Results);
+            },
+            failure: function(response, opts) {
+                deferred.reject(response);
+            }
+        });
+        return deferred.promise;
+    },
+
     loadWsapiRecords: function(config){
         var deferred = Ext.create('Deft.Deferred');
         var default_config = {

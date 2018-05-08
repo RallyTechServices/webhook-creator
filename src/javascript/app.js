@@ -6,12 +6,11 @@ Ext.define("CArABU.app.WebhookCreator", {
     layout: 'border',
 
     items: [
-        {xtype:'container',flex: 1, itemId:'grid_box1', region: 'west'},
-        {xtype:'container',flex: 1, itemId:'grid_box2', region: 'east'}
+        {xtype:'container',flex: 1, itemId:'grid_box1', region: 'center'},
     ],
 
     integrationHeaders : {
-        name : "CArABU.app.TSApp"
+        name : "CArABU.app.WebhookCreator"
     },
 
     launch: function() {
@@ -20,25 +19,20 @@ Ext.define("CArABU.app.WebhookCreator", {
 
         this.logger.setSaveForLater(this.getSetting('saveLog'));
 
-        Deft.Chain.sequence([
-            function() {
-                return TSUtilities.loadAStoreWithAPromise('Defect',['Name','State']);
-            },
-            function() {
-                return TSUtilities.loadWsapiRecords({
-                    model:'Defect',
-                    fetch: ['Name','State']
-                });
-            }
-        ]).then({
+        TSUtilities.loadWebhooks().then({
             scope: this,
             success: function(results) {
-                var store = results[0];
-                var defects = results[1];
-                var field_names = ['Name','State'];
-
-                this._displayGridGivenStore(store,field_names);
-                this._displayGridGivenRecords(defects,field_names);
+                var fields = [
+                    'ObjectUUID',
+                    'Name',
+                    'Expressions',
+                    'Disabled',
+                    'TargetUrl',
+                    'ObjectTypes',
+                    'CreationDate',
+                    'LastUpdateDate'
+                ];
+                this._displayGridGivenRecords(results,fields);
             },
             failure: function(error_message){
                 alert(error_message);
@@ -48,26 +42,37 @@ Ext.define("CArABU.app.WebhookCreator", {
         });
     },
 
-    _displayGridGivenStore: function(store,field_names){
-        this.down('#grid_box1').add({
-            xtype: 'rallygrid',
-            store: store,
-            columnCfgs: field_names
-        });
-    },
-
     _displayGridGivenRecords: function(records,field_names){
         var store = Ext.create('Rally.data.custom.Store',{
             data: records
         });
 
+        this.logger.log(records);
+
         var cols = Ext.Array.map(field_names, function(name){
-            return { dataIndex: name, text: name, flex: 1 };
+            return {
+                dataIndex: name,
+                text: name,
+                flex: 1 ,
+                renderer: function(value){
+                    if ( Ext.isArray(value) ) {
+                        if ( value[0] && Ext.isObject(value[0]) && !Ext.isArray(value[0])) {
+                            return JSON.stringify(value);
+                        }
+                        return value.join(', ');
+                    }
+                    if ( Ext.isObject(value) ) {
+                        return JSON.stringify(value);
+                    }
+                    return value;
+                }
+            };
         });
-        this.down('#grid_box2').add({
+        this.down('#grid_box1').add({
             xtype: 'rallygrid',
             store: store,
-            columnCfgs: cols
+            columnCfgs: cols,
+            showRowActionsColumn: false
         });
     },
 
